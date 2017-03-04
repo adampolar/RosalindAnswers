@@ -9,7 +9,7 @@ namespace Rosalind
     {
         public static void Main(string[] args)
         {
-            var fileName = "/home/adam/Downloads/rosalind_2sum.txt";
+            var fileName = "/home/adam/Downloads/rosalind_3sum.txt";
             var answer = new List<string>();
             using (var r = new StreamReader(new FileStream(fileName, FileMode.Open)))
             {
@@ -17,8 +17,8 @@ namespace Rosalind
                 var a = r.ReadLine();
                 while (!String.IsNullOrEmpty(a))
                 {
-                    var ans = Determine2Sum(a.Split(' ').Select(c => int.Parse(c)).ToArray());
-                    answer.Add(ans != null ? (ans.Item1 + " " + ans.Item2) : (-1).ToString());
+                    var ans = Determine3Sum(a.Split(' ').Select(c => int.Parse(c)).ToArray());
+                    answer.Add(ans != null ? (ans.Item1 + " " + ans.Item2 + " " + ans.Item3) : (-1).ToString());
                     a = r.ReadLine();
                 }
             }
@@ -30,6 +30,57 @@ namespace Rosalind
                 }
                 w.Flush();
             }
+        }
+
+        //On2 time 0n extra space
+        public static Tuple<int, int, int> Determine3Sum(int[] array)
+        {
+            Dictionary<int, int> dict = new Dictionary<int, int>();
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (!dict.Keys.Contains(array[i]))
+                {
+                    dict.Add(array[i], i);
+                }
+            }
+            for (int j = 1; j < array.Length; j++)
+            {
+                for (int k = 0; k < j; k++)
+                {
+                    var relIndex = -1;
+                    dict.TryGetValue(-(array[j] + array[k]), out relIndex);
+                    //Try get value sets the out param back to 0, Cheers!!
+                    if(array[relIndex] + array[j] + array[k] != 0) relIndex = -1;
+                    
+                    if (relIndex != -1 && relIndex != j && relIndex != k)
+                    {
+                        var first = relIndex < k ? relIndex : k;
+                        var second = relIndex < k ? k : relIndex < j ? relIndex : j;
+                        var third = relIndex > j ? relIndex : j;
+                        return new Tuple<int, int, int>(first + 1, second + 1, third + 1);
+                    }
+                }
+            }
+            return null;
+        }
+
+        //On3 time no extra space
+        public static Tuple<int, int, int> Determine3Sum03(int[] array)
+        {
+            for (int i = 2; i < array.Length; i++)
+            {
+                for (int j = 1; j < i; j++)
+                {
+                    for (int k = 0; k < j; k++)
+                    {
+                        if (array[i] + array[j] + array[k] == 0)
+                        {
+                            return new Tuple<int, int, int>(k + 1, j + 1, i + 1);
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
         public static Tuple<int, int> Determine2Sum(int[] array)

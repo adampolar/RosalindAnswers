@@ -47,5 +47,25 @@ namespace Tests
             Assert.NotNull(ans);
             Assert.Equal(arr[ans.Item1 - 1], -arr[ans.Item2 - 1]);
         }
+
+        [Fact]
+        public void TestThreeSum()
+        {
+            Assert.Equal(null, Program.Determine3Sum(new int[] { 2, -3, 4, 10, 5 }));
+
+            var arr = new int[] { 8, -6, 4, -2, -8};
+            var ans = Program.Determine3Sum(arr);
+            Assert.NotNull(ans);
+            Assert.Equal(0, arr[ans.Item1 - 1] + arr[ans.Item2 - 1] + arr[ans.Item3 - 1]);
+
+            arr = new int[] { -5, 2, 3, 2, -4};
+            ans = Program.Determine3Sum(arr);
+            Assert.NotNull(ans);
+            Assert.Equal(0, arr[ans.Item1 - 1] + arr[ans.Item2 - 1] + arr[ans.Item3 - 1]);
+            
+            Assert.Equal(null, Program.Determine2Sum(new int[] { -5, 2, 3, 2, -4 }));
+
+            Assert.Equal(null, Program.Determine3Sum(new int[] { 2, 4, -5, 6, 8 }));
+        }
     }
 }
