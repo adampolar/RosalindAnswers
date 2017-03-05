@@ -1,10 +1,9 @@
 ﻿using Xunit;
 using Rosalind;
-using System;
 
 namespace Tests
 {
-    public class Tests
+    public class ArrayTests
     {
         [Fact]
         public void MergeTwoSortedArrays()
