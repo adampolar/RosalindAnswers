@@ -21,6 +21,24 @@ namespace Rosalind
         public BinaryTree<V> ChildOne { get; set; }
         public BinaryTree<V> ChildTwo { get; set; }
 
+
+        public int Count {
+            get
+            {
+                var count = 1;
+                if (this.ChildOne != null)
+                {
+                    count = count + this.ChildOne.Count;
+                }
+                if (this.ChildTwo != null)
+                {
+                    count = count + this.ChildTwo.Count;
+                }
+
+                return count;
+            }
+        }
+
         public V[] ReverseBreadthFirstOrdering()
         {
             List<V> answer = new List<V>();

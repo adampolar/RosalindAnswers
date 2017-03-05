@@ -9,7 +9,7 @@ namespace Rosalind
     {
         public static void Main(string[] args)
         {
-            var fileName = "/home/adam/Downloads/rosalind_hea (2).txt";
+            var fileName = "/home/adam/Downloads/rosalind_hs (1).txt";
             var answer = new List<string>();
             using (var r = new StreamReader(new FileStream(fileName, FileMode.Open)))
             {
@@ -19,16 +19,16 @@ namespace Rosalind
                 {
                     var ans = new Heap<int>(
                         a.Split(' ').Select(b => int.Parse(b)).ToArray())
-                        .ReverseBreadthFirstOrdering();
+                        .HeapSort();
                     answer.Add(String.Join(" ", ans));
                     a = r.ReadLine();
                 }
             }
 
             int[] heapOrder = answer[0].Split(' ').Select(a => int.Parse(a)).ToArray();
-            for (int i = 2; i <= heapOrder.Length - 1; i = i + 2)
+            for (int i = 1; i <= heapOrder.Length - 1; i++)
             {
-                if (heapOrder[i - 1] > heapOrder[i / 2 - 1])
+                if (heapOrder[i] < heapOrder[i - 1])
                 {
                     Console.WriteLine(i);
                     break;

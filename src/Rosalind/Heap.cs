@@ -10,7 +10,7 @@ namespace Rosalind
         {
             List<V> list = arr.ToList();
             var index = arr.GetMaxIndex();
-            
+
             this.Value = list[index];
             list.RemoveAt(index);
 
@@ -41,5 +41,60 @@ namespace Rosalind
             if (leftHand.Length > 0) this.ChildOne = new Heap<V>(leftHand);
             if (rightHand.Length > 0) this.ChildTwo = new Heap<V>(rightHand);
         }
+
+        public V[] HeapSort()
+        {
+            var end = Count - 1;
+
+            var array = ReverseBreadthFirstOrdering();
+
+            while (end > 0)
+            {
+                var temp = array[0];
+                array[0] = array[end];
+                array[end] = temp;
+
+                end--;
+
+                SiftDown(array, 0, end);
+            }
+
+            return array;
+        }
+
+        private void SiftDown(V[] array, int start, int end)
+        {
+            var root = start;
+
+            while (2 * root + 1 <= end)
+            {
+                var child = 2 * root + 1;
+                var swap = root;
+
+                if(array[swap].CompareTo(array[child]) < 0)
+                {
+                    swap = child;
+                }
+
+                if ( child + 1 <= end && array[swap].CompareTo(array[child + 1]) < 0)
+                {
+                    swap = child + 1;
+                }
+
+                if(swap == root)
+                {
+                    return;
+                }
+
+                var temp = array[root];
+
+                array[root] = array[swap];
+                array[swap] = temp;
+
+                root = swap;
+
+            }
+        }
+
     }
 }

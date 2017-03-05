@@ -6,6 +6,20 @@ namespace Tests
     public class BinaryTreeAndHeapTests
     {
         [Fact]
+        public void TestBinaryTreeCount()
+        {
+            Assert.Equal(1, new Heap<int>(new int[] { 1 }).Count);
+            Assert.Equal(5, new Heap<int>(new int[] { 1, 3, 5, 7, 2 }).Count);
+        }
+
+        [Fact]
+        public void TestHeapSort()
+        {
+            Assert.Equal(new int[] { 1, 2, 3, 5, 7 }, 
+            new Heap<int>(new int[] { 1, 3, 5, 7, 2 }).HeapSort());
+        }
+
+        [Fact]
         public void TestReverseBreadthFirstSearch()
         {
             var tree = new BinaryTree<int>(1,
