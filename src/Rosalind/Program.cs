@@ -9,36 +9,33 @@ namespace Rosalind
     {
         public static void Main(string[] args)
         {
-            var fileName = "/home/adam/Downloads/rosalind_hs (1).txt";
+            var fileName = "/home/adam/Downloads/rosalind_bfs.txt";
             var answer = new List<string>();
+            List<GraphUsingEdges<int>.Edge> edges = new List<GraphUsingEdges<int>.Edge>();
+            var indexNo = 0;
             using (var r = new StreamReader(new FileStream(fileName, FileMode.Open)))
             {
-                r.ReadLine();
+                indexNo = int.Parse(r.ReadLine().Split(' ')[0]);
                 var a = r.ReadLine();
+
+
                 while (!String.IsNullOrEmpty(a))
                 {
-                    var ans = new Heap<int>(
-                        a.Split(' ').Select(b => int.Parse(b)).ToArray())
-                        .HeapSort();
-                    answer.Add(String.Join(" ", ans));
+                    int[] edge = a.Split(' ').Select(b => int.Parse(b)).ToArray();
+                    edges.Add(new GraphUsingEdges<int>.Edge(edge[0], edge[1]));
                     a = r.ReadLine();
                 }
             }
 
-            int[] heapOrder = answer[0].Split(' ').Select(a => int.Parse(a)).ToArray();
-            for (int i = 1; i <= heapOrder.Length - 1; i++)
-            {
-                if (heapOrder[i] < heapOrder[i - 1])
-                {
-                    Console.WriteLine(i);
-                    break;
-                }
-            }
+            GraphUsingEdges<int> g = new GraphUsingEdges<int>(edges);
+
             using (var w = new StreamWriter(new FileStream(fileName + "ans", FileMode.OpenOrCreate)))
             {
-                foreach (var a in answer)
+                w.Write(0 + " ");
+                for (int i = 2; i <= indexNo; i++)
                 {
-                    w.WriteLine(a);
+                    var a = g.FindMinimumDistanceBetweenNodes(1, i);
+                    w.Write((a == null ? -1 : a) + " ");
                 }
                 w.Flush();
             }
