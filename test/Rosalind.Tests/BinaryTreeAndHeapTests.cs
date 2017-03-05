@@ -27,18 +27,21 @@ namespace Tests
         [Fact]
         public void TestHeapConstruction()
         {
-            Heap<int> heap = new Heap<int>(new int[] { 1, 3, 5, 7, 2 });
-            Assert.Equal(new int[] { 7, 5, 1, 3, 2 }, 
-                new Heap<int>(new int[] { 1, 3, 5, 7, 2 }).ReverseBreadthFirstOrdering());
+            int[] heapOrder = new Heap<int>(new int[] { 1, 3, 5, 7, 2 }).ReverseBreadthFirstOrdering();
+            //The max heap property refers to a 1 indexed array
+            for(int i = 2; i <= heapOrder.Length - 1; i = i + 2)
+            {
+                Assert.True(heapOrder[i - 1] <= heapOrder[i/2 - 1]);
+            }
         }
         [Fact]
         public void TestTriangleNumberGenerator()
         {
-            Assert.Equal(1, Arithmetic.GetLargestTriangleNumberLessThan(1));
+            Assert.Equal(1, Arithmetic.GetLargestBinaryTreeNumberLessThan(1));
 
-            Assert.Equal(3, Arithmetic.GetLargestTriangleNumberLessThan(3));
+            Assert.Equal(3, Arithmetic.GetLargestBinaryTreeNumberLessThan(3));
 
-            Assert.Equal(15, Arithmetic.GetLargestTriangleNumberLessThan(20));
+            Assert.Equal(15, Arithmetic.GetLargestBinaryTreeNumberLessThan(20));
         }
 
     }

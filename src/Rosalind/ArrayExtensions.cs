@@ -6,6 +6,23 @@ namespace Rosalind
 {
     public static class ArrayExtensions
     {
+        public static int GetMaxIndex<V>(this V[] array) where V : IComparable
+        {
+            if (array.Length == 0)
+            {
+                return -1;
+            }
+            int indexOfCurrentMax = 0;
+            for(int i = 1; i < array.Length; i++)
+            {
+                if(array[i].CompareTo(array[indexOfCurrentMax]) > 0)
+                {
+                    indexOfCurrentMax = i;
+                }
+            }
+            return indexOfCurrentMax;
+
+        }
         //On2 time 0n extra space
         public static Tuple<int, int, int> Determine3Sum(this int[] array)
         {

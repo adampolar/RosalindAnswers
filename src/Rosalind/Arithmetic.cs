@@ -4,7 +4,7 @@ namespace Rosalind
 {
     public class Arithmetic
     {
-        public static int GetLargestTriangleNumberLessThan(int thisNumber)
+        public static int GetLargestBinaryTreeNumberLessThan(int thisNumber)
         {
             if (thisNumber < 1)
             {

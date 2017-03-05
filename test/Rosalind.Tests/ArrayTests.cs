@@ -6,6 +6,15 @@ namespace Tests
     public class ArrayTests
     {
         [Fact]
+        public void TestGetMaxElement()
+        {
+            Assert.Equal(0, new int[] { 5,1 }.GetMaxIndex());
+            Assert.Equal(-1, new int[] {}.GetMaxIndex());
+            Assert.Equal(1, new int[] { 1, 5}.GetMaxIndex());
+            Assert.Equal(1, new int[] { 5, 6, 1 }.GetMaxIndex());
+        }
+
+        [Fact]
         public void MergeTwoSortedArrays()
         {
             Assert.Equal(new int[] { -5, 2, 4, 10, 11, 12, 18 },
