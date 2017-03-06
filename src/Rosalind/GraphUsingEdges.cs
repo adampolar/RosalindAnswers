@@ -6,21 +6,21 @@ namespace Rosalind
 {
     public class GraphUsingEdges<V>
     {
-        public Dictionary<V, List<V>> Edges { get; set; }
+        public Dictionary<V, List<Edge>> Edges { get; set; }
 
         public GraphUsingEdges(List<Edge> edges)
         {
-            Edges = new Dictionary<V, List<V>>();
+            Edges = new Dictionary<V, List<Edge>>();
 
             foreach (Edge e in edges)
             {
                 if (!Edges.Keys.Contains(e.From.Value))
                 {
-                    Edges.Add(e.From.Value, new List<V>() { e.To.Value });
+                    Edges.Add(e.From.Value, new List<Edge>() { e });
                 }
                 else
                 {
-                    Edges[e.From.Value].Add(e.To.Value);
+                    Edges[e.From.Value].Add(e);
                 }
             }
         }
@@ -28,31 +28,33 @@ namespace Rosalind
         public int? FindMinimumDistanceBetweenNodes(V nodeOne, V nodeTwo)
         {
             var node = new Node(nodeOne);
-            return node.DistanceTo(nodeTwo, new Func<V, V[]>(a => GetNeighbours(a))); ///mmmm lexical closure
+            return node.DistanceTo(nodeTwo, new Func<V, Edge[]>(a => GetNeighbours(a))); ///mmmm lexical closure
         }
 
-        public V[] GetNeighbours(V value)
+        public Edge[] GetNeighbours(V value)
         {
-            List<V> ret;
-            return Edges.TryGetValue(value, out ret)? ret.ToArray(): new V[]{};
+            List<Edge> ret;
+            return Edges.TryGetValue(value, out ret) ? ret.ToArray() : new Edge[] { };
         }
 
         public class Edge
         {
             public Node From { get; set; }
             public Node To { get; set; }
+            public int Distance { get; set; }
 
-            public Edge(V from, V to)
+            public Edge(V from, V to, int distance = 1)
             {
                 From = new Node(from);
                 To = new Node(to);
+                Distance = distance;
             }
         }
 
         public class Node
         {
             public V Value { get; set; }
-            public Node[] Neighbours
+            public Edge[] Neighbours
             {
                 get; set;
             }
@@ -62,53 +64,48 @@ namespace Rosalind
                 Value = value;
             }
 
-            public int? DistanceTo(V otherNode, Func<V, V[]> neighbourGetter)
+            public int? DistanceTo(V otherNode, Func<V, Edge[]> neighbourGetter)
             {
-                Queue<Tuple<Node, List<Node>>> q = new Queue<Tuple<Node, List<Node>>>();
-                Dictionary<V, bool> visited = new Dictionary<V, bool>();
+                Queue<Tuple<Node, int>> q = new Queue<Tuple<Node, int>>();
+                Dictionary<V, int?> visited = new Dictionary<V, int?>();
 
-                var currentNode = new Tuple<Node, List<Node>>(this, new List<Node>());
+                var currentNode = new Tuple<Node, int>(this, 0);
 
                 while (currentNode != null)
                 {
                     //get all neighbours
-                    currentNode.Item1.Neighbours = neighbourGetter(currentNode.Item1.Value).Select(a => new Node(a)).ToArray();
-                    foreach (Node child in currentNode.Item1.Neighbours)
+                    currentNode.Item1.Neighbours = neighbourGetter(currentNode.Item1.Value).ToArray();
+                    foreach (Edge edge in currentNode.Item1.Neighbours)
                     {
-                        if (child.Value.Equals(otherNode))
-                        {
-                            return currentNode.Item2.Count + 1;
-                        }
+                        //if (edge.To.Value.Equals(otherNode))
+                        //{
+                        //    return currentNode.Item2 + edge.Distance;
+                       // }
 
                         //make sure we dont go round in circles
-                        var visitedBool = false;
-                        visited.TryGetValue(child.Value, out visitedBool);
-                        if (!visitedBool)//(currentNode.Item2.Where(n => n.Value.Equals(child.Value)).Count() == 0)
+                        int? distance = null;
+                        visited.TryGetValue(edge.To.Value, out distance);
+                        if (!distance.HasValue)
                         {
-                            visited.Add(child.Value, true);
-                            var routeCopy = new List<Node>(currentNode.Item2);
-                            routeCopy.Add(child);
-                            q.Enqueue(new Tuple<Node, List<Node>>(child, routeCopy));
+                            visited.Add(edge.To.Value, currentNode.Item2 + edge.Distance);
+                            q.Enqueue(new Tuple<Node, int>(edge.To, currentNode.Item2 + edge.Distance));
                         }
+                        else if (distance.Value > currentNode.Item2 + edge.Distance)
+                        {
+                            visited[edge.To.Value] = currentNode.Item2 + edge.Distance;
+                            q.Enqueue(new Tuple<Node, int>(edge.To, currentNode.Item2 + edge.Distance));
+                        }
+
+                        
                     }
 
                     currentNode = q.Count > 0 ? q.Dequeue() : null;
                 }
+                int? distanceAnswer = null;
 
-                return null;
-            }
+                visited.TryGetValue(otherNode, out distanceAnswer);
 
-            internal void AddAllChildrenToList(List<Node> nodes)
-            {
-                foreach (var child in Neighbours)
-                {
-                    if (nodes.Where(n => n.Value.Equals(child.Value)).Count() == 0)
-                    {
-                        nodes.Add(child);
-                        child.AddAllChildrenToList(nodes);
-                    }
-                }
-
+                return distanceAnswer;
             }
         }
     }
