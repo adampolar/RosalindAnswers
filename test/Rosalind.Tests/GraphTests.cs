@@ -19,8 +19,6 @@ namespace Rosalind
             Assert.Equal(
                 new int[] { 1, 2, 3, 4, 5, 6 },
                 graph.Nodes.Select(n => n.Value).OrderBy(n => n).ToArray());
-
-
         }
 
         [Fact]
@@ -88,6 +86,40 @@ namespace Rosalind
 
             }
             Assert.Equal(new int[] { -1, 3, 2, 5, 6, -1 }, ans);
+        }
+
+
+        GraphUsingEdges<int> graph2Ways = new GraphUsingEdges<int>(
+            new List<GraphUsingEdges<int>.Edge>()
+        {
+            new GraphUsingEdges<int>.Edge(1,2, bothWays: true),
+            new GraphUsingEdges<int>.Edge(1,5, bothWays: true),
+            new GraphUsingEdges<int>.Edge(5,9, bothWays: true),
+            new GraphUsingEdges<int>.Edge(5,10, bothWays: true),
+            new GraphUsingEdges<int>.Edge(9,10, bothWays: true),
+            new GraphUsingEdges<int>.Edge(3,4, bothWays: true),
+            new GraphUsingEdges<int>.Edge(3,7, bothWays: true),
+            new GraphUsingEdges<int>.Edge(3,8, bothWays: true),
+            new GraphUsingEdges<int>.Edge(4,8, bothWays: true),
+            new GraphUsingEdges<int>.Edge(7,11, bothWays: true),
+            new GraphUsingEdges<int>.Edge(8,11, bothWays: true),
+            new GraphUsingEdges<int>.Edge(8,12, bothWays: true),
+            new GraphUsingEdges<int>.Edge(6,6, bothWays: true)
+        });
+
+        [Fact]
+        public void GetConnectedComponentsAmount()
+        {
+            int unedgedComponents = 0;
+            for(int i = 1; i < 13; i++)
+            {
+                if(!graph2Ways.Edges.Keys.Contains(i))
+                {
+                    unedgedComponents++;
+                }
+            }
+            Assert.Equal(3, graph2Ways.GetConnectedComponentsCount() + unedgedComponents);
+
         }
     }
 }
