@@ -8,6 +8,21 @@ namespace Rosalind
     {
         public Dictionary<V, List<Edge>> Edges { get; set; }
 
+        public List<V> NodeValues
+        {
+            get
+            {
+                var nodeValues = Edges.Select(e => e.Key).ToList();
+                var allNodes = new List<V>(nodeValues);
+                nodeValues.ForEach(
+                    (nodeValue) => allNodes.AddRange(Edges[nodeValue].Select(e => e.To.Value))
+                    );
+
+                return allNodes.Distinct().ToList();
+
+            }
+        }
+
         public GraphUsingEdges(List<Edge> edges)
         {
             Edges = new Dictionary<V, List<Edge>>();
@@ -68,6 +83,82 @@ namespace Rosalind
             return connectedGraphs.Distinct().Count();
         }
 
+        public bool HasNegativeCycles()
+        {
+            var originalNode = Edges.First().Key;
+            var costs = NodeValues
+                .Where(e => !e.Equals(originalNode))
+                .ToDictionary(e => e, e => new InfinityInt(true));
+
+            Dictionary<V, V> predecessors = NodeValues
+                .Where(e => !e.Equals(originalNode))
+                .ToDictionary(e => e, e => default(V));
+
+
+            costs.Add(originalNode, new InfinityInt(0));
+
+            for (int i = 1; i <= NodeValues.Count + 1; i++)
+            {
+                foreach (KeyValuePair<V, List<Edge>> edges in Edges)
+                {
+                    foreach (Edge e in edges.Value)
+                    {
+                        if (!costs[e.From.Value].IsInfinity && (costs[e.To.Value].IsInfinity || costs[e.From.Value].Value + e.Distance < costs[e.To.Value].Value))
+                        {
+                            if (i == NodeValues.Count)
+                            {
+                                return true;
+                            }
+                            costs[e.To.Value] = new InfinityInt(costs[e.From.Value].Value + e.Distance);
+                            predecessors[e.To.Value] = e.From.Value;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private class InfinityInt
+        {
+            public bool IsInfinity { get; private set; }
+
+            public int Value { get; private set; }
+
+            public InfinityInt(int value)
+            {
+                Value = value;
+            }
+
+            public InfinityInt(bool isInfinity) 
+            {
+                IsInfinity = isInfinity;
+            }
+            public override bool Equals (object obj)
+            {
+                //
+                // See the full list of guidelines at
+                //   http://go.microsoft.com/fwlink/?LinkID=85237
+                // and also the guidance for operator== at
+                //   http://go.microsoft.com/fwlink/?LinkId=85238
+                //
+                
+                if (obj == null || GetType() != obj.GetType())
+                {
+                    return false;
+                }
+                
+                return IsInfinity == IsInfinity && Value == Value;
+            }
+            
+            // override object.GetHashCode
+            public override int GetHashCode()
+            {
+                return IsInfinity ? IsInfinity.GetHashCode() : Value.GetHashCode();
+            }
+
+        }
+
         private class NodeArrayComparer : IEqualityComparer<V[]>
         {
             bool IEqualityComparer<V[]>.Equals(V[] x, V[] y)
@@ -77,9 +168,9 @@ namespace Rosalind
                     return false;
                 }
 
-                for(int i = 0; i < x.Length; i++)
+                for (int i = 0; i < x.Length; i++)
                 {
-                    if(!x[i].Equals(y[i]))
+                    if (!x[i].Equals(y[i]))
                     {
                         return false;
                     }

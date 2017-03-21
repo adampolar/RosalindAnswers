@@ -111,9 +111,9 @@ namespace Rosalind
         public void GetConnectedComponentsAmount()
         {
             int unedgedComponents = 0;
-            for(int i = 1; i < 13; i++)
+            for (int i = 1; i < 13; i++)
             {
-                if(!graph2Ways.Edges.Keys.Contains(i))
+                if (!graph2Ways.Edges.Keys.Contains(i))
                 {
                     unedgedComponents++;
                 }
@@ -121,5 +121,36 @@ namespace Rosalind
             Assert.Equal(3, graph2Ways.GetConnectedComponentsCount() + unedgedComponents);
 
         }
+
+        GraphUsingEdges<int> graphWithNoNegativeCycle = new GraphUsingEdges<int>(
+            new List<GraphUsingEdges<int>.Edge>()
+        {
+            new GraphUsingEdges<int>.Edge(1,4,4),
+            new GraphUsingEdges<int>.Edge(4,2,3),
+            new GraphUsingEdges<int>.Edge(2,3,1),
+            new GraphUsingEdges<int>.Edge(3,1,6),
+            new GraphUsingEdges<int>.Edge(2,1,-7),
+        });
+
+        GraphUsingEdges<int> graphWithNegativeCycle = new GraphUsingEdges<int>(
+            new List<GraphUsingEdges<int>.Edge>()
+        {
+            new GraphUsingEdges<int>.Edge(1,2,-8),
+            new GraphUsingEdges<int>.Edge(2,3,20),
+            new GraphUsingEdges<int>.Edge(3,1,-1),
+            new GraphUsingEdges<int>.Edge(3,2,-30),
+        });
+
+
+
+
+        [Fact]
+        public void TestBellmanFordCanDetectNegativeWeightCycle()
+        {
+            Assert.True(graphWithNegativeCycle.HasNegativeCycles());
+            Assert.False(graphWithNoNegativeCycle.HasNegativeCycles());
+        }
+
+
     }
 }

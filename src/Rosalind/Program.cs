@@ -9,41 +9,43 @@ namespace Rosalind
     {
         public static void Main(string[] args)
         {
-            var fileName = "/home/adam/Downloads/rosalind_cc.txt";
+            var fileName = "/home/adam/Downloads/rosalind_nwc (3).txt";
 
-            int answer;
-            
+
+
+            var ans = new List<int>();
+
             using (var r = new StreamReader(new FileStream(fileName, FileMode.Open)))
             {
 
                 var a = r.ReadLine();
-                int nodeCount = int.Parse(a.Split(' ')[0]);
-                a = r.ReadLine();
 
                 List<GraphUsingEdges<int>.Edge> edges = new List<GraphUsingEdges<int>.Edge>();
-                
+
                 while (a != null)
                 {
-                    int[] edge = a.Split(' ').Select(n => int.Parse(n)).ToArray();
-                    edges.Add(new GraphUsingEdges<int>.Edge(edge[0], edge[1], bothWays:true));
+                    if ((string.Empty == a || a.Split(' ').Length == 2) && edges.Count > 0)
+                    {
+                        ans.Add(new GraphUsingEdges<int>(edges).HasNegativeCycles() ? 1 : -1);
+                        edges = new List<GraphUsingEdges<int>.Edge>();
+                    }
+                    else if (a.Split(' ').Length == 3)
+                    {
+                        var e = a.Split(' ').Select(i => int.Parse(i)).ToArray();
+                        edges.Add(new GraphUsingEdges<int>.Edge(e[0], e[1], e[2]));
+                    }
+
                     a = r.ReadLine();
                 }
-                GraphUsingEdges<int> graph = new GraphUsingEdges<int>(edges);
 
-                int unconnectedNodes = 0;
-                for(int i = 1; i <= nodeCount; i++ )
-                {
-                    if(!graph.Edges.Keys.Contains(i)) unconnectedNodes++;
-                }
-
-                answer = graph.GetConnectedComponentsCount() + unconnectedNodes;
+                ans.Add(new GraphUsingEdges<int>(edges).HasNegativeCycles() ? 1 : -1);
 
             }
 
 
             using (var w = new StreamWriter(new FileStream(fileName + "ans", FileMode.OpenOrCreate)))
             {
-                w.Write(answer);
+                w.Write(String.Join(" ", ans));
                 w.Flush();
             }
         }
